@@ -34,7 +34,7 @@ Decode a percent encoded string value.
 ### decode_plus/1 ###
 
 ```erlang
-decode_plus(Value) -&gt; DecodedValue
+decode_plus(Value) -> DecodedValue
 ```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>DecodeValue = string()</code></li></ul>
@@ -49,7 +49,7 @@ in RFC-3986.
 ### encode/1 ###
 
 ```erlang
-encode(Value) -&gt; EncodedValue
+encode(Value) -> EncodedValue
 ```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>EncodedValue = string()</code></li></ul>
@@ -61,7 +61,7 @@ Percent encode a string value.
 ### encode_plus/1 ###
 
 ```erlang
-encode_plus(Value) -&gt; EncodedValue
+encode_plus(Value) -> EncodedValue
 ```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>EncodedValue = string()</code></li></ul>
@@ -77,7 +77,7 @@ in RFC-3986.
 ### parse_uri/1 ###
 
 ```erlang
-parse_uri(URI) -&gt; ParsedURI
+parse_uri(URI) -> ParsedURI
 ```
 
 <ul class="definitions"><li><code>URI = string()</code></li><li><code>ParsedURI = #uri{}</code></li></ul>
@@ -89,7 +89,7 @@ Parse a URI string returning the parsed data as a record
 ### parse_url/1 ###
 
 ```erlang
-parse_url(URL) -&gt; ParsedURL
+parse_url(URL) -> ParsedURL
 ```
 
 <ul class="definitions"><li><code>URI = string()</code></li><li><code>ParsedURL = #url{}</code></li></ul>
