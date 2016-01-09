@@ -4,6 +4,53 @@ urilib
 
 [![Build Status](https://travis-ci.org/gmr/urilib.svg?branch=master)](https://travis-ci.org/gmr/urilib) [![codecov.io](https://codecov.io/github/gmr/urilib/coverage.svg?branch=master)](https://codecov.io/github/gmr/urilib?branch=master)
 
+Example Usage
+-------------
+```erlang
+-include_lib("urilib.h").
+
+URI = urilib:parse_uri("http://foo:bar@www.google.com/search?baz=qux#corgie"),
+io:format("Parsed URI: ~p~n", [URI]).
+
+URL = urllib:build(#url{scheme=http, host="www.google.com", path="/search", query=[{"foo", "bar"}], fragment="baz"}),
+io:format("Built URL: ~s~n", [URL]).
+```
+
+Records
+-------
+
+#### authority ####
+```erlang
+#{host :: string(), port :: integer()}).
+```
+
+#### userinfo ####
+```erlang
+#{username :: string(), password :: string()}).
+```
+
+#### uri ####
+```erlang
+#{scheme :: atom(),
+  userinfo :: #userinfo{},
+  authority :: #authority{},
+  path :: string(),
+  query :: list(),
+  fragment :: string()}).
+```
+
+#### url ####
+```erlang
+#{scheme :: atom(),
+  username :: string(),
+  password :: string(),
+  host :: string(),
+  port :: integer(),
+  path :: string(),
+  query :: list(),
+  fragment :: string()}).
+```
+
 API
 ---
 
