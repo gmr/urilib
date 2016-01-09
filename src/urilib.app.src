@@ -1,6 +1,9 @@
 {application, urilib, [
   {description, "RFC-3986 URI Library"},
-  {vsn, "0.1.0"},
+  {vsn,"git"},
+  {licenses, ["BSD"]},
+  {links, [{"Github", "https://github.com/gmr/urilib"}]},
+  {maintainers, ["Gavin M. Roy"]},
   {registered, [urilib]},
   {applications, [
     kernel,
