@@ -7,21 +7,21 @@
 -record(authority, {host :: string(),
                     port :: integer()}).
 
--record(userinfo, {username :: string() | undefined,
-                   password :: string() | undefined}).
+-record(userinfo, {username :: string(),
+                   password :: string()}).
 
 -record(uri, {scheme :: atom(),
-              userinfo :: #userinfo{} | undefined,
+              userinfo :: #userinfo{},
               authority :: #authority{},
-              path :: string() | undefined,
-              query,
-              fragment :: string() | undefined}).
+              path :: string(),
+              query :: list(),
+              fragment :: string()}).
 
 -record(url, {scheme :: atom(),
-              username :: string() | undefined,
-              password :: string() | undefined,
+              username :: string(),
+              password :: string(),
               host :: string(),
               port :: integer(),
-              path :: string() | undefined,
-              query,
-              fragment :: string() | undefined}).
+              path :: string(),
+              query :: list(),
+              fragment :: string()}).
