@@ -10,11 +10,9 @@ API
 <a name="build-1"></a>
 
 ### build/1 ###
-
-<pre><code>
-build(Uri::Value) -&gt; URI
-</code></pre>
-
+```erlang
+build(Uri::Value) -> URI
+```
 <ul class="definitions"><li><code>Value = #uri{} | #url{}</code></li><li><code>URI = string()</code></li></ul>
 
 Returns a URI from the record passed in.
@@ -23,9 +21,9 @@ Returns a URI from the record passed in.
 
 ### decode/1 ###
 
-<pre><code>
-decode(Value) -&gt; DecodedValue
-</code></pre>
+```erlang
+decode(Value) -> DecodedValue
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>DecodeValue = string()</code></li></ul>
 
@@ -35,9 +33,9 @@ Decode a percent encoded string value.
 
 ### decode_plus/1 ###
 
-<pre><code>
+```erlang
 decode_plus(Value) -&gt; DecodedValue
-</code></pre>
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>DecodeValue = string()</code></li></ul>
 
@@ -50,9 +48,9 @@ in RFC-3986.
 
 ### encode/1 ###
 
-<pre><code>
+```erlang
 encode(Value) -&gt; EncodedValue
-</code></pre>
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>EncodedValue = string()</code></li></ul>
 
@@ -62,9 +60,9 @@ Percent encode a string value.
 
 ### encode_plus/1 ###
 
-<pre><code>
+```erlang
 encode_plus(Value) -&gt; EncodedValue
-</code></pre>
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>EncodedValue = string()</code></li></ul>
 
@@ -78,9 +76,9 @@ in RFC-3986.
 
 ### parse_uri/1 ###
 
-<pre><code>
+```erlang
 parse_uri(URI) -&gt; ParsedURI
-</code></pre>
+```
 
 <ul class="definitions"><li><code>URI = string()</code></li><li><code>ParsedURI = #uri{}</code></li></ul>
 
@@ -90,9 +88,9 @@ Parse a URI string returning the parsed data as a record
 
 ### parse_url/1 ###
 
-<pre><code>
+```erlang
 parse_url(URL) -&gt; ParsedURL
-</code></pre>
+```
 
 <ul class="definitions"><li><code>URI = string()</code></li><li><code>ParsedURL = #url{}</code></li></ul>
 
