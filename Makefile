@@ -1,4 +1,4 @@
-PROJECT=urllib
+PROJECT=urilib
 REBAR=bin/rebar
 
 all: get-deps compile
