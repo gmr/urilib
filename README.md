@@ -4,17 +4,62 @@ urilib
 
 [![Build Status](https://travis-ci.org/gmr/urilib.svg?branch=master)](https://travis-ci.org/gmr/urilib) [![codecov.io](https://codecov.io/github/gmr/urilib/coverage.svg?branch=master)](https://codecov.io/github/gmr/urilib?branch=master)
 
+Example Usage
+-------------
+```erlang
+-include_lib("urilib.h").
+
+URI = urilib:parse_uri("http://foo:bar@www.google.com/search?baz=qux#corgie"),
+io:format("Parsed URI: ~p~n", [URI]).
+
+URL = urllib:build(#url{scheme=http, host="www.google.com", path="/search", query=[{"foo", "bar"}], fragment="baz"}),
+io:format("Built URL: ~s~n", [URL]).
+```
+
+Records
+-------
+
+#### authority ####
+```erlang
+#{host :: string(), port :: integer()}).
+```
+
+#### userinfo ####
+```erlang
+#{username :: string(), password :: string()}).
+```
+
+#### uri ####
+```erlang
+#{scheme :: atom(),
+  userinfo :: #userinfo{},
+  authority :: #authority{},
+  path :: string(),
+  query :: list(),
+  fragment :: string()}).
+```
+
+#### url ####
+```erlang
+#{scheme :: atom(),
+  username :: string(),
+  password :: string(),
+  host :: string(),
+  port :: integer(),
+  path :: string(),
+  query :: list(),
+  fragment :: string()}).
+```
+
 API
 ---
 
 <a name="build-1"></a>
 
 ### build/1 ###
-
-<pre><code>
-build(Uri::Value) -&gt; URI
-</code></pre>
-
+```erlang
+build(Uri::Value) -> URI
+```
 <ul class="definitions"><li><code>Value = #uri{} | #url{}</code></li><li><code>URI = string()</code></li></ul>
 
 Returns a URI from the record passed in.
@@ -23,9 +68,9 @@ Returns a URI from the record passed in.
 
 ### decode/1 ###
 
-<pre><code>
-decode(Value) -&gt; DecodedValue
-</code></pre>
+```erlang
+decode(Value) -> DecodedValue
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>DecodeValue = string()</code></li></ul>
 
@@ -35,9 +80,9 @@ Decode a percent encoded string value.
 
 ### decode_plus/1 ###
 
-<pre><code>
-decode_plus(Value) -&gt; DecodedValue
-</code></pre>
+```erlang
+decode_plus(Value) -> DecodedValue
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>DecodeValue = string()</code></li></ul>
 
@@ -50,9 +95,9 @@ in RFC-3986.
 
 ### encode/1 ###
 
-<pre><code>
-encode(Value) -&gt; EncodedValue
-</code></pre>
+```erlang
+encode(Value) -> EncodedValue
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>EncodedValue = string()</code></li></ul>
 
@@ -62,9 +107,9 @@ Percent encode a string value.
 
 ### encode_plus/1 ###
 
-<pre><code>
-encode_plus(Value) -&gt; EncodedValue
-</code></pre>
+```erlang
+encode_plus(Value) -> EncodedValue
+```
 
 <ul class="definitions"><li><code>Value = string()</code></li><li><code>EncodedValue = string()</code></li></ul>
 
@@ -78,9 +123,9 @@ in RFC-3986.
 
 ### parse_uri/1 ###
 
-<pre><code>
-parse_uri(URI) -&gt; ParsedURI
-</code></pre>
+```erlang
+parse_uri(URI) -> ParsedURI
+```
 
 <ul class="definitions"><li><code>URI = string()</code></li><li><code>ParsedURI = #uri{}</code></li></ul>
 
@@ -90,9 +135,9 @@ Parse a URI string returning the parsed data as a record
 
 ### parse_url/1 ###
 
-<pre><code>
-parse_url(URL) -&gt; ParsedURL
-</code></pre>
+```erlang
+parse_url(URL) -> ParsedURL
+```
 
 <ul class="definitions"><li><code>URI = string()</code></li><li><code>ParsedURL = #url{}</code></li></ul>
 
