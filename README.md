@@ -2,7 +2,7 @@ urilib
 ======
 [RFC-3986](https://tools.ietf.org/html/rfc3986) URI Library for Erlang.
 
-[![Build Status](https://travis-ci.org/gmr/urilib.svg?branch=master)](https://travis-ci.org/gmr/urilib)
+[![Build Status](https://travis-ci.org/gmr/urilib.svg?branch=master)](https://travis-ci.org/gmr/urilib) [![codecov.io](https://codecov.io/github/gmr/urilib/coverage.svg?branch=master)](https://codecov.io/github/gmr/urilib?branch=master)
 
 API
 ---
