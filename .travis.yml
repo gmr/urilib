@@ -6,12 +6,11 @@ otp_release:
   - 18.1
   - 18.2
   - 18.2.1
+before_install:
+  - pip install --user codecov
 #before_script:
 #  - make build-plt
 script: make test
 after_success:
-  - bin/covertool -cover .eunit/cover.coverdata  -appname urilib -output coverage.xml
-  - virtualenv codecov
-  - source codecov/bin/activate
-  - pip install codecov
+  - bin/covertool -cover .eunit/cover.coverdata  -appname urilib -output cobertura.xml
   - codecov
