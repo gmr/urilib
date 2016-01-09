@@ -7,17 +7,6 @@ urilib
 API
 ---
 
-<a name="index"></a>
-
-## Function Index ##
-
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#build-1">build/1</a></td><td>Returns a URI from the record passed in.</td></tr><tr><td valign="top"><a href="#decode-1">decode/1</a></td><td>Decode a percent encoded string value.</td></tr><tr><td valign="top"><a href="#decode_plus-1">decode_plus/1</a></td><td>Decode a percent encoded string value that uses pluses for spaces.</td></tr><tr><td valign="top"><a href="#encode-1">encode/1</a></td><td>Percent encode a string value.</td></tr><tr><td valign="top"><a href="#encode_plus-1">encode_plus/1</a></td><td>Percent encode a string value similar to encode/1, but encodes spaces with a
-plus (+) instead of %20.</td></tr><tr><td valign="top"><a href="#parse_uri-1">parse_uri/1</a></td><td>Parse a URI string returning the parsed data as a record.</td></tr><tr><td valign="top"><a href="#parse_url-1">parse_url/1</a></td><td>Parse a URL string returning the parsed data as a record.</td></tr></table>
-
-<a name="functions"></a>
-
-## Function Details ##
-
 <a name="build-1"></a>
 
 ### build/1 ###
