@@ -42,7 +42,7 @@ build(#uri{scheme=Scheme, userinfo=UserInfo, authority=Authority,
 
 
 -spec parse_uri(string()) -> #uri{}.
-%% @spec parse_uri(URI) -> ParsedURI.
+%% @spec parse_uri(URI) -> ParsedURI
 %% where
 %%    URI = string()
 %%    ParsedURI = #uri{}
@@ -63,7 +63,7 @@ parse_uri(URI) ->
 
 
 -spec parse_url(string()) -> #url{}.
-%% @spec parse_url(URL) -> ParsedURL.
+%% @spec parse_url(URL) -> ParsedURL
 %% where
 %%    URI = string()
 %%    ParsedURL = #url{}
