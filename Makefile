@@ -5,7 +5,7 @@ all: get-deps compile
 
 build-plt:
 	@dialyzer --build_plt --output_plt ~/.$(PROJECT).plt \
-		--apps kernel stdlib erts
+		--apps kernel stdlib erts inets edoc
 
 clean:
 	@( $(REBAR) clean )
