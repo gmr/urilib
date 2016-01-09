@@ -1,0 +1,12 @@
+{application, urilib, [
+  {description, "RFC-3986 URI Library"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {applications, [
+    kernel,
+    stdlib,
+    edoc
+  ]},
+  {mod, {urilib, []}},
+  {env, []}
+]}.
