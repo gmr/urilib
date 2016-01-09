@@ -1,0 +1,13 @@
+sudo: false
+language: erlang
+otp_release:
+  - R15B
+  - R16B03
+  - 17.5
+  - 18.0
+  - 18.1
+  - 18.2
+  - 18.2.1
+before_script:
+  - make build-plt
+script: make test && make dialyze
