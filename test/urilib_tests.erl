@@ -8,6 +8,11 @@ decode_test() ->
     Expect = "foo/bar baz",
     ?assertEqual(Expect, urilib:decode(Value)).
 
+decode_plus_test() ->
+    Value = "foo/bar+baz",
+    Expect = "foo/bar baz",
+    ?assertEqual(Expect, urilib:decode_plus(Value)).
+
 encode1_test() ->
     Value = "foo/bar baz",
     Expect = "foo%2fbar%20baz",

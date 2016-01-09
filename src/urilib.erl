@@ -11,9 +11,7 @@
          parse_uri/1,
          parse_url/1,
          encode/1,
-         encode/2,
          encode_plus/1,
-         encode_plus/2,
          decode/1,
          decode_plus/1]).
 
@@ -61,11 +59,6 @@ encode(Value) ->
     edoc_lib:escape_uri(Value).
 
 
--spec encode(string(), string()) -> string().
-encode(_Value, _Safe) ->
-    ok.
-
-
 -spec encode_plus(string()) -> string().
 %% @spec encode_plus(Value) -> EncodedValue
 %% where
@@ -79,11 +72,6 @@ encode(_Value, _Safe) ->
 %% @end
 encode_plus(Value) ->
     string:join([edoc_lib:escape_uri(V) || V <- string:tokens(Value, " ")], "+").
-
-
--spec encode_plus(string(), string()) -> string().
-encode_plus(_Value, _Safe) ->
-    ok.
 
 
 %% @spec decode(Value) -> DecodedValue
