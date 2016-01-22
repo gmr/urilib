@@ -1,6 +1,6 @@
 {application, urilib, [
   {description, "A RFC-3986 URI Library for parsing and building URIs"},
-  {vsn,"git"},
+  {vsn,"0.1.0"},
   {licenses, ["BSD"]},
   {links, [{"Github", "https://github.com/gmr/urilib"}]},
   {maintainers, ["Gavin M. Roy"]},
