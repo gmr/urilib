@@ -7,12 +7,25 @@
 -module(urilib).
 
 -export([build/1,
-         parse_uri/1,
-         parse_url/1,
-         encode/1,
-         encode_plus/1,
-         decode/1,
-         decode_plus/1]).
+         parse/1,
+         parse/2,
+         percent_decode/1,
+         percent_encode/1,
+         plus_decode/1,
+         plus_encode/1]).
+
+-export_type([scheme/0,
+              host/0,
+              tcp_port/0,
+              username/0,
+              password/0,
+              userinfo/0,
+              authority/0,
+              path/0,
+              query/0,
+              fragment/0,
+              uri/0,
+              url/0]).
 
 -include("urilib.hrl").
 
@@ -21,189 +34,253 @@
 -compile(export_all).
 -endif.
 
--spec build(#uri{} | #url{}) -> string().
-%% @spec build(Value) -> URI
-%% where
-%%    Value = #uri{} | #url{}
-%%    URI = string()
-%% @doc Returns a URI from the record passed in.
-%%
-%% @end
-build(#uri{scheme=Scheme, userinfo=UserInfo, authority=Authority,
-           path=Path, query=QArgs, fragment=Fragment}) ->
-  U1 = url_add_scheme(Scheme),
-  U2 = url_maybe_add_user(UserInfo, U1),
-  U3 = url_add_host_and_port(Scheme,
-                             Authority#authority.host,
-                             Authority#authority.port, U2),
-  U4 = url_add_path(Path, U3),
-  U5 = url_maybe_add_qargs(QArgs, U4),
-  url_maybe_add_fragment(Fragment, U5).
+-type scheme() :: http | https | atom().
+-type host() :: string().
+-type tcp_port() :: integer().
+-type username() :: string() | undefined.
+-type password() :: string() | undefined.
+-type userinfo() :: {username(), password()} | undefined.
+-type authority() :: {userinfo(), host(), tcp_port()}.
+-type path() :: string().
+-type query() :: [tuple() | string()] | undefined.
+-type fragment() :: string() | undefined.
+-type uri() :: {scheme(), authority(), path(), query(), fragment()}.
+-type url() :: {scheme(), username(), password(), host(), tcp_port(), path(), query(), fragment()}.
 
 
--spec parse_uri(string()) -> #uri{}.
-%% @spec parse_uri(URI) -> ParsedURI
-%% where
-%%    URI = string()
-%%    ParsedURI = #uri{}
-%% @doc Parse a URI string returning the parsed data as a record
+-spec build(Value :: uri() | url()) -> string().
+%% @doc Build a URI
 %% @end
-parse_uri(URI) ->
-    case http_uri:parse(URI, [{scheme_defaults, http_uri:scheme_defaults()}, {fragment, true}]) of
+build({Scheme, {undefined, Host, Port}, Path, Query, Fragment}) ->
+    build({Scheme, {{undefined, undefined}, Host, Port}, Path, Query, Fragment});
+
+build({Scheme, {{Username, Password}, Host, Port}, Path, Query, Fragment}) ->
+    U1 = url_add_scheme(Scheme),
+    U2 = url_maybe_add_userinfo(Username, Password, U1),
+    U3 = url_add_host_and_port(Scheme, Host, Port, U2),
+    U4 = url_add_path(Path, U3),
+    U5 = url_maybe_add_qargs(Query, U4),
+    url_maybe_add_fragment(Fragment, U5);
+
+build({Scheme, undefined, Host, Port, Path, Query, Fragment}) ->
+    build({Scheme, undefined, undefined, Host, Port, Path, Query, Fragment});
+
+build({Scheme, Username, Password, Host, Port, Path, Query, Fragment}) ->
+    U1 = url_add_scheme(Scheme),
+    U2 = url_maybe_add_userinfo(Username, Password, U1),
+    U3 = url_add_host_and_port(Scheme, Host, Port, U2),
+    U4 = url_add_path(Path, U3),
+    U5 = url_maybe_add_qargs(Query, U4),
+    url_maybe_add_fragment(Fragment, U5).
+
+
+-spec parse(string()) -> uri().
+%% @doc Parse a URI
+%% @end
+parse(Value) ->
+    case http_uri:parse(Value, [{scheme_defaults, http_uri:scheme_defaults()}, {fragment, true}]) of
         {ok, {Scheme, UserInfo, Host, Port, Path, Query, Fragment}} ->
-            #uri{scheme=Scheme,
-                 userinfo=parse_userinfo(UserInfo),
-                 authority=#authority{host=Host,
-                                      port=Port},
-                 path=Path,
-                 query=parse_query(Query),
-                 fragment=Fragment};
-        {error, Reason} -> {error, Reason}
+            {Scheme, {parse_userinfo(UserInfo), Host, Port}, Path, parse_query(Query), parse_fragment(Fragment)};
+      {error, Reason} -> {error, Reason}
     end.
 
 
--spec parse_url(string()) -> #url{}.
-%% @spec parse_url(URL) -> ParsedURL
-%% where
-%%    URI = string()
-%%    ParsedURL = #url{}
-%% @doc Parse a URL string returning the parsed data as a record
+-spec parse(string(), Return :: uri | url) -> uri().
+%% @doc Parse a URI, returning the result as either a {@type uri()} or {@type url()}.
 %% @end
-parse_url(URL) ->
-    case http_uri:parse(URL, [{scheme_defaults, http_uri:scheme_defaults()}, {fragment, true}]) of
+parse(Value, uri) ->
+    parse(Value);
+
+parse(Value, url) ->
+    case http_uri:parse(Value, [{scheme_defaults, http_uri:scheme_defaults()}, {fragment, true}]) of
         {ok, {Scheme, UserInfo, Host, Port, Path, Query, Fragment}} ->
-            User = parse_userinfo(UserInfo),
-            #url{scheme=Scheme,
-                 username=User#userinfo.username,
-                 password=User#userinfo.password,
-                 host=Host,
-                 port=Port,
-                 path=Path,
-                 query=parse_query(Query),
-                 fragment=Fragment};
-        {error, Reason} -> {error, Reason}
+            {Username, Password} = parse_userinfo(UserInfo),
+            {Scheme, Username, Password, Host, Port, Path, parse_query(Query), parse_fragment(Fragment)};
+      {error, Reason} -> {error, Reason}
     end.
 
 
--spec encode(string()) -> string().
-%% @spec encode(Value) -> EncodedValue
-%% where
-%%    Value = string()
-%%    EncodedValue = string()
+-spec percent_encode(string()) -> string().
 %% @doc Percent encode a string value.
 %% @end
-encode(Value) ->
+percent_encode(Value) ->
     edoc_lib:escape_uri(Value).
 
 
--spec encode_plus(string()) -> string().
-%% @spec encode_plus(Value) -> EncodedValue
-%% where
-%%    Value = string()
-%%    EncodedValue = string()
-%% @doc Percent encode a string value similar to encode/1, but encodes spaces with a
-%% plus (+) instead of %20. This function can be used for encoding query arguments.
-%%
-%% Note: The use of plus for space is defined in RFC-1630 but does not appear
-%%       in RFC-3986.
-%% @end
-encode_plus(Value) ->
-    string:join([edoc_lib:escape_uri(V) || V <- string:tokens(Value, " ")], "+").
-
-
-%% @spec decode(Value) -> DecodedValue
-%% where
-%%    Value = string()
-%%    DecodeValue = string()
+-spec percent_decode(string()) -> string().
 %% @doc Decode a percent encoded string value.
 %% @end
--spec decode(string()) -> string().
-decode(Value) ->
+percent_decode(Value) ->
     http_uri:decode(Value).
 
 
--spec decode_plus(string()) -> string().
-%% @spec decode_plus(Value) -> DecodedValue
-%% where
-%%    Value = string()
-%%    DecodeValue = string()
+-spec plus_encode(string()) -> string().
+%% @doc Percent encode a string value similar to encode/1, but encodes spaces with a
+%% plus (`+') instead of `%20'. This function can be used for encoding query arguments.
+%%
+%% Note: The use of plus for space is defined in RFC-1630 but does not appear in RFC-3986.
+%% @end
+plus_encode(Value) ->
+    string:join([edoc_lib:escape_uri(V) || V <- string:tokens(Value, " ")], "+").
+
+
+-spec plus_decode(string()) -> string().
 %% @doc Decode a percent encoded string value that uses pluses for spaces.
 %%
 %% Note: The use of plus for space is defined in RFC-1630 but does not appear
 %%       in RFC-3986.
 %% @end
-decode_plus(Value) ->
+plus_decode(Value) ->
     string:join([http_uri:decode(V) || V <- string:tokens(Value, "+")], " ").
 
 
--spec parse_query(string()) -> [].
+%% Private Functions
+
+-spec parse_fragment(string()) -> string() | undefined.
 %% @private
-parse_query([]) -> [];
+parse_fragment([]) ->
+    undefined;
+
+parse_fragment(Value) ->
+    Value.
+
+
+-spec parse_query(string()) -> [tuple() | string()] | undefined.
+%% @private
 parse_query(Query) ->
-    case re:split(Query, "[&|?]", [{return, list}]) of
-        [""]    -> [];
-        QArgs -> [split_query_arg(Arg) || Arg <- QArgs, Arg =/= []]
-    end.
+    QArgs = re:split(Query, "[&|?]", [{return, list}]),
+    parse_query_result([split_query_arg(Arg) || Arg <- QArgs, Arg =/= []]).
 
 
--spec parse_userinfo(string()) -> #userinfo{}.
+-spec parse_query_result(string()) -> [tuple() | string()] | undefined.
 %% @private
-parse_userinfo([]) -> #userinfo{};
+parse_query_result([]) ->
+    undefined;
+
+parse_query_result(QArgs) ->
+    QArgs.
+
+
+-spec parse_userinfo(string()) -> userinfo().
+%% @private
 parse_userinfo(Value) ->
-    case string:tokens(Value, ":") of
-        [User, Password] -> #userinfo{username=User, password=Password};
-        [User] -> #userinfo{username=User}
-    end.
+    parse_userinfo_result(string:tokens(Value, ":")).
 
 
--spec split_query_arg(string()) -> {string(), string()}.
+-spec parse_userinfo_result(list()) -> userinfo().
+%% @private
+parse_userinfo_result([User, Password]) ->
+    {User, Password};
+
+parse_userinfo_result([User]) ->
+    {User, undefined};
+
+parse_userinfo_result([]) ->
+    undefined.
+
+
+-spec split_query_arg(string()) -> {string(), string()} | undefined.
 %% @private
 split_query_arg(Argument) ->
-    [K, V] = string:tokens(Argument, "="),
-    {K, V}.
+    case string:tokens(Argument, "=") of
+        [K, V] -> {plus_decode(K), plus_decode(V)};
+        [Value] -> plus_decode(Value)
+    end.
 
 
+-spec url_add_scheme(atom()) -> string().
 %% @private
+url_add_scheme(undefined) ->
+    "http://";
+
 url_add_scheme(Scheme) ->
-  string:concat(atom_to_list(Scheme), "://").
+    string:concat(atom_to_list(Scheme), "://").
 
 
+-spec url_maybe_add_userinfo(username(), password(), string()) -> string().
 %% @private
-url_maybe_add_user([], URL) -> URL;
-url_maybe_add_user(User, URL) ->
-  string:concat(URL, string:concat(User, "@")).
+url_maybe_add_userinfo([], [], URL) ->
+    URL;
+
+url_maybe_add_userinfo(undefined, undefined, URL) ->
+    URL;
+
+url_maybe_add_userinfo(Username, [], URL) ->
+    url_maybe_add_userinfo(Username, undefined, URL);
+
+url_maybe_add_userinfo(Username, undefined, URL) ->
+    string:concat(URL, string:concat(Username, "@"));
+
+url_maybe_add_userinfo(Username, Password, URL) ->
+    string:concat(URL, string:concat(string:join([Username, Password], ":"), "@")).
 
 
+-spec url_add_host_and_port(scheme(), host(), tcp_port(), string()) -> string().
 %% @private
+url_add_host_and_port(undefined, Host, undefined, URL) ->
+    string:concat(URL, Host);
+
+url_add_host_and_port(http, Host, undefined, URL) ->
+    string:concat(URL, Host);
+
 url_add_host_and_port(http, Host, 80, URL) ->
-  string:concat(URL, Host);
+    string:concat(URL, Host);
 
+url_add_host_and_port(https, Host, undefined, URL) ->
+    string:concat(URL, Host);
 
-%% @private
 url_add_host_and_port(https, Host, 443, URL) ->
-  string:concat(URL, Host);
+    string:concat(URL, Host);
+
 url_add_host_and_port(_, Host, Port, URL) ->
-  string:concat(URL, string:join([Host, integer_to_list(Port)], ":")).
+    string:concat(URL, string:join([Host, integer_to_list(Port)], ":")).
 
 
+-spec url_add_path(path(), string()) -> string().
 %% @private
+url_add_path(undefined, URL) ->
+    string:concat(URL, "/");
+
 url_add_path(Path, URL) ->
-  Escaped = string:join([edoc_lib:escape_uri(P) || P <- string:tokens(Path, "/")], "/"),
-  string:join([URL, Escaped], "/").
+    Escaped = string:join([url_escape_path_segment(P) || P <- string:tokens(Path, "/")], "/"),
+    string:join([URL, Escaped], "/").
 
 
+-spec url_escape_path_segment(string()) -> string().
 %% @private
-url_maybe_add_qargs([], URL) -> URL;
+url_escape_path_segment(Value) ->
+    edoc_lib:escape_uri(http_uri:decode(Value)).
+
+
+-spec url_maybe_add_qargs(query(), string()) -> string().
+%% @private
+url_maybe_add_qargs(undefined, URL) ->
+    URL;
+
+url_maybe_add_qargs([], URL) ->
+    URL;
+
 url_maybe_add_qargs(QArgs, URL) ->
-  QStr = string:join([string:join([encode_plus(K), encode_plus(V)], "=") || {K,V} <- QArgs], "&"),
-  string:join([URL, QStr], "?").
+    QStr = string:join([url_maybe_encode_query_arg(Arg) || Arg <- QArgs], "&"),
+    string:join([URL, QStr], "?").
 
 
+-spec url_maybe_encode_query_arg(tuple() | string()) -> string().
 %% @private
+url_maybe_encode_query_arg({K, V}) ->
+    string:join([plus_encode(K), plus_encode(V)], "=");
+
+url_maybe_encode_query_arg(V) ->
+    plus_encode(V).
+
+
+-spec url_maybe_add_fragment(fragment(), string()) -> string().
+%% @private
+url_maybe_add_fragment(undefined, URL) -> URL;
 url_maybe_add_fragment([], URL) -> URL;
 url_maybe_add_fragment(Value, URL) ->
-  Fragment = case string:left(Value, 1) of
-    "#" -> edoc_lib:escape_uri(string:sub_string(Value, 2));
-    _ -> edoc_lib:escape_uri(Value)
-  end,
-  string:join([URL, Fragment], "#").
+    Fragment = case string:left(Value, 1) of
+        "#" -> edoc_lib:escape_uri(string:sub_string(Value, 2));
+        _ -> edoc_lib:escape_uri(Value)
+    end,
+    string:join([URL, Fragment], "#").
