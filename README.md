@@ -4,7 +4,9 @@ urilib
 
 Parse and build URIs with automatic percent encoding and plus encoding of query arguments.
 
-[![Version](https://img.shields.io/hexpm/v/urilib.svg)][![Downloads](https://img.shields.io/hexpm/dt/urilib.svg)][![Build Status](https://travis-ci.org/gmr/urilib.svg?branch=master)](https://travis-ci.org/gmr/urilib) [![codecov.io](https://codecov.io/github/gmr/urilib/coverage.svg?branch=master)](https://codecov.io/github/gmr/urilib?branch=master)
+[![Version](https://img.shields.io/hexpm/v/urilib.svg)](https://hex.pm/packages/urilib)
+[![Downloads](https://img.shields.io/hexpm/dt/urilib.svg)](https://hex.pm/packages/urilib)
+[![Build Status](https://travis-ci.org/gmr/urilib.svg?branch=master)](https://travis-ci.org/gmr/urilib) [![codecov.io](https://codecov.io/github/gmr/urilib/coverage.svg?branch=master)](https://codecov.io/github/gmr/urilib?branch=master)
 
 ## API
 
