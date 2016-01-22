@@ -1,5 +1,5 @@
 {application, urilib, [
-  {description, "RFC-3986 URI Library"},
+  {description, "A RFC-3986 URI Library for parsing and building URIs"},
   {vsn,"git"},
   {licenses, ["BSD"]},
   {links, [{"Github", "https://github.com/gmr/urilib"}]},
