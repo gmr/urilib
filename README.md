@@ -6,12 +6,18 @@ urilib
 
 Example Usage
 -------------
+
 ```erlang
--include_lib("urilib.h").
+Eshell V7.2.1  (abort with ^G)
+1> urilib:build({http, {{"guest", "guest"}, "localhost", 15672}, "/api/queues", [{"name", "test"}], undefined}).
+"http://guest:guest@localhost:15672/api/queues?name=test"
 
-URI = urilib:parse("http://foo:bar@www.google.com/search?baz=qux#corgie"),
-io:format("Parsed URI: ~p~n", [URI]).
+2> urilib:build({http, "guest", "guest", "localhost", 15672, "/api/queues", [{"name", "test"}], undefined}).    
+"http://guest:guest@localhost:15672/api/queues?name=test"
 
-URL = urllib:build({http, undefined, undefined, "www.google.com", undefined, "/search", [{"foo", "bar"}], "baz"}),
-io:format("Built URL: ~s~n", [URL]).
+3> urilib:parse("http://guest:guest@localhost:15672/api/queues?name=test").
+{http,{{"guest","guest"},"localhost",15672},
+      "/api/queues",
+      [{"name","test"}],
+      undefined}
 ```
