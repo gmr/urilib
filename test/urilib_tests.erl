@@ -2,8 +2,6 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
--include("urilib.hrl").
-
 build_variation1_test() ->
     Params = {amqp, {{"guest", "password"}, "rabbitmq", 5672}, "/%2f", [{"heartbeat", "5"}], undefined},
     Expect = "amqp://guest:password@rabbitmq:5672/%2f?heartbeat=5",

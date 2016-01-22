@@ -27,8 +27,6 @@
               uri/0,
               url/0]).
 
--include("urilib.hrl").
-
 %% Export all for unit tests
 -ifdef(TEST).
 -compile(export_all).
