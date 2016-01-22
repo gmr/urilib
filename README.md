@@ -20,7 +20,7 @@ Function           | Description
 `percent_decode/1` | Decode a percent encoded string value.
 `percent_encode/1` | Percent encode a string value.
 `plus_decode/1`    | Decode a percent encoded string value that uses pluses for spaces.
-`plus_encode/1`    | Percent encode a string value similar to encode/1, but encodes spaces with a plus (`+`) instead of `%20`.
+`plus_encode/1`    | Percent encode a string value similar to `percent_encode/1`, but encodes spaces with a plus (`+`) instead of `%20`.
 
 ### Types
 
