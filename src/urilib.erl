@@ -79,7 +79,8 @@ parse(Value) ->
     case http_uri:parse(Value, [{scheme_defaults, http_uri:scheme_defaults()}, {fragment, true}]) of
         {ok, {Scheme, UserInfo, Host, Port, Path, Query, Fragment}} ->
             {Scheme, {parse_userinfo(UserInfo), Host, Port}, Path, parse_query(Query), parse_fragment(Fragment)};
-      {error, Reason} -> {error, Reason}
+        {error, Reason} ->
+            {error, Reason}
     end.
 
 
@@ -94,7 +95,8 @@ parse(Value, url) ->
         {ok, {Scheme, UserInfo, Host, Port, Path, Query, Fragment}} ->
             {Username, Password} = parse_userinfo(UserInfo),
             {Scheme, Username, Password, Host, Port, Path, parse_query(Query), parse_fragment(Fragment)};
-      {error, Reason} -> {error, Reason}
+        {error, Reason} ->
+            {error, Reason}
     end.
 
 
