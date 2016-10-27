@@ -2,6 +2,11 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+hex_to_upper_test() ->
+    Value = "%2f%c0%88this+is+%c3%a4n+%c3%aaxample+value+woot%c0%88%2f",
+    Expect = "%2F%C0%88this+is+%C3%A4n+%C3%AAxample+value+woot%C0%88%2F",
+    ?assertEqual(Expect, urilib:hex_to_upper(Value)).
+
 build_variation1_test() ->
     Params = {amqp, {{"guest", "password"}, "rabbitmq", 5672}, "/%2f", [{"heartbeat", "5"}], undefined},
     Expect = "amqp://guest:password@rabbitmq:5672/%2f?heartbeat=5",
@@ -147,7 +152,32 @@ percent_encode_unicode_test() ->
     Expect = "foo%2fbar%c0%88baz",
     ?assertEqual(Expect, urilib:percent_encode(Value)).
 
+percent_encode_lowercase_unicode_test() ->
+    Value = "/✈this is än êxample value woot✈/",
+    Expect = "%2f%c0%88this%20is%20%c3%a4n%20%c3%aaxample%20value%20woot%c0%88%2f",
+    ?assertEqual(Expect, urilib:percent_encode(Value, lowercase)).
+
+percent_encode_uppercase_unicode_test() ->
+    Value = "/✈this is än êxample value woot✈/",
+    Expect = "%2F%C0%88this%20is%20%C3%A4n%20%C3%AAxample%20value%20woot%C0%88%2F",
+    ?assertEqual(Expect, urilib:percent_encode(Value, uppercase)).
+
+percent_encode_uppercase_perent_test() ->
+    Value = "/✈this is än êxample value woot with 30% off✈/",
+    Expect = "%2F%C0%88this+is+%C3%A4n+%C3%AAxample+value+woot+with+30%25+off%C0%88%2F",
+    ?assertEqual(Expect, urilib:plus_encode(Value, uppercase)).
+
 plus_encode_test() ->
     Value = "foo/bar baz",
     Expect = "foo%2fbar+baz",
     ?assertEqual(Expect, urilib:plus_encode(Value)).
+
+plus_encode_lowercase_test() ->
+    Value = "/✈this is än êxample value woot✈/",
+    Expect = "%2f%c0%88this+is+%c3%a4n+%c3%aaxample+value+woot%c0%88%2f",
+    ?assertEqual(Expect, urilib:plus_encode(Value, lowercase)).
+
+plus_encode_uppercase_test() ->
+    Value = "/✈this is än êxample value woot✈/",
+    Expect = "%2F%C0%88this+is+%C3%A4n+%C3%AAxample+value+woot%C0%88%2F",
+    ?assertEqual(Expect, urilib:plus_encode(Value, uppercase)).

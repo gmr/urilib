@@ -11,8 +11,10 @@
          parse/2,
          percent_decode/1,
          percent_encode/1,
+         percent_encode/2,
          plus_decode/1,
-         plus_encode/1]).
+         plus_encode/1,
+         plus_encode/2]).
 
 -export_type([scheme/0,
               host/0,
@@ -32,6 +34,7 @@
 -compile(export_all).
 -endif.
 
+-type hexcase() :: uppercase | lowercase.
 -type scheme() :: http | https | atom().
 -type host() :: string().
 -type tcp_port() :: integer().
@@ -44,7 +47,6 @@
 -type fragment() :: string() | undefined.
 -type uri() :: {scheme(), authority(), path(), query(), fragment()}.
 -type url() :: {scheme(), username(), password(), host(), tcp_port(), path(), query(), fragment()}.
-
 
 -spec build(Value :: uri() | url()) -> string().
 %% @doc Build a URI
@@ -101,10 +103,25 @@ parse(Value, url) ->
 
 
 -spec percent_encode(string()) -> string().
-%% @doc Percent encode a string value.
+%% @doc Percent encode a string value. Note that this will return hexidecimal
+%% values in lowercase. If you need uppercase values, invoke percent_encode/2
+%% with the second parameter as the value ``upercase``.
 %% @end
 percent_encode(Value) ->
     edoc_lib:escape_uri(Value).
+
+
+-spec percent_encode(string(), hexcase()) -> string().
+%% @doc Percent encode a string value.
+%%
+%% When lowercase is passed, hexidecimal strings with A-F values in them are returned
+%% as lowercase. Likewise, the uppercase value will encode hexidecimal strings as
+%% uppercase values.
+%% @end
+percent_encode(Value, lowercase) ->
+    percent_encode(Value);
+percent_encode(Value, uppercase) ->
+    hex_to_upper(percent_encode(Value)).
 
 
 -spec percent_decode(string()) -> string().
@@ -122,6 +139,21 @@ percent_decode(Value) ->
 %% @end
 plus_encode(Value) ->
     string:join([edoc_lib:escape_uri(V) || V <- string:tokens(Value, " ")], "+").
+
+
+-spec plus_encode(string(), hexcase()) -> string().
+%% @doc Percent encode a string value similar to encode/1, but encodes spaces with a
+%% plus (`+') instead of `%20'. This function can be used for encoding query arguments.
+%% When lowercase is passed, hexidecimal strings with A-F values in them are returned
+%% as lowercase. Likewise, the uppercase value will encode hexidecimal strings as
+%% uppercase values.
+%%
+%% Note: The use of plus for space is defined in RFC-1630 but does not appear in RFC-3986.
+%% @end
+plus_encode(Value, lowercase) ->
+    plus_encode(Value);
+plus_encode(Value, uppercase) ->
+    hex_to_upper(plus_encode(Value)).
 
 
 -spec plus_decode(string()) -> string().
@@ -284,3 +316,21 @@ url_maybe_add_fragment(Value, URL) ->
         _ -> edoc_lib:escape_uri(Value)
     end,
     string:join([URL, Fragment], "#").
+
+
+-spec hex_to_upper(string()) -> string().
+%% @private
+hex_to_upper(Value) ->
+    hex_to_upper(Value, [], []).
+hex_to_upper([], [], Value) ->
+    Value;
+hex_to_upper([], Hex, Value) ->
+    lists:append(Value, string:to_upper(Hex));
+hex_to_upper([37|T], [], Value) ->
+    hex_to_upper(T, [37], Value);
+hex_to_upper([H|T], [], Value) ->
+    hex_to_upper(T, [], lists:append(Value, [H]));
+hex_to_upper(Remaining, Hex, Value) when length(Hex) == 3 ->
+    hex_to_upper(Remaining, [], lists:append(Value, string:to_upper(Hex)));
+hex_to_upper([H|T], Hex, Value) ->
+    hex_to_upper(T, lists:append(Hex, [H]), Value).

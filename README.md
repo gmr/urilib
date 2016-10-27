@@ -19,8 +19,10 @@ Function           | Description
 `parse/2`          | Parse a URI, returning the result as either a `uri()` or `url()`.
 `percent_decode/1` | Decode a percent encoded string value.
 `percent_encode/1` | Percent encode a string value.
+`percent_encode/2` | Percent encode a string value, explicitly stating the desired case for hexidecimal values. Pass `uppercase` to the second value to have hex values returned as `%2F` instead of `%2f`.
 `plus_decode/1`    | Decode a percent encoded string value that uses pluses for spaces.
 `plus_encode/1`    | Percent encode a string value similar to `percent_encode/1`, but encodes spaces with a plus (`+`) instead of `%20`.
+`plus_encode/2`    | Percent encode a string value similar to `percent_encode/1`, but encodes spaces with a plus (`+`) instead of `%20`, explicitly stating the desired case for hexidecimal values. Pass `uppercase` to the second value to have hex values returned as `%2F` instead of `%2f`.
 
 ### Types
 
