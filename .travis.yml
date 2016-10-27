@@ -6,10 +6,10 @@ otp_release:
   - 18.1
   - 18.2
   - 18.2.1
+  - 19.0
+  - 19.1
 before_install:
   - pip install --user codecov
-before_script:
-  - kerl list installations
 script: bin/rebar3 eunit
 after_success:
   - bin/covertool -cover _build/test/cover/eunit.coverdata -appname urilib -output cobertura.xml
