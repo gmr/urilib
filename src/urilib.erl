@@ -323,11 +323,11 @@ url_maybe_add_fragment(Value, URL) ->
 hex_to_upper(Value) ->
     hex_to_upper(Value, []).
 hex_to_upper([], Accum) ->
-    Accum;
+    lists:reverse(Accum);
 hex_to_upper([$%, B1, B2|T], Accum) ->
-    hex_to_upper(T, lists:append(Accum, [$%, to_upper(B1), to_upper(B2)]));
+    hex_to_upper(T, [to_upper(B2), to_upper(B1), $% | Accum]);
 hex_to_upper([H|T], Accum) ->
-    hex_to_upper(T, lists:append(Accum, [H])).
+    hex_to_upper(T, [H | Accum]).
 
 
 -spec to_upper(char()) -> char().
