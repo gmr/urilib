@@ -321,16 +321,20 @@ url_maybe_add_fragment(Value, URL) ->
 -spec hex_to_upper(string()) -> string().
 %% @private
 hex_to_upper(Value) ->
-    hex_to_upper(Value, [], []).
-hex_to_upper([], [], Value) ->
-    Value;
-hex_to_upper([], Hex, Value) ->
-    lists:append(Value, string:to_upper(Hex));
-hex_to_upper([37|T], [], Value) ->
-    hex_to_upper(T, [37], Value);
-hex_to_upper([H|T], [], Value) ->
-    hex_to_upper(T, [], lists:append(Value, [H]));
-hex_to_upper(Remaining, Hex, Value) when length(Hex) == 3 ->
-    hex_to_upper(Remaining, [], lists:append(Value, string:to_upper(Hex)));
-hex_to_upper([H|T], Hex, Value) ->
-    hex_to_upper(T, lists:append(Hex, [H]), Value).
+    hex_to_upper(Value, []).
+hex_to_upper([], Accum) ->
+    Accum;
+hex_to_upper([$%, B1, B2|T], Accum) ->
+    hex_to_upper(T, lists:append(Accum, [$%, to_upper(B1), to_upper(B2)]));
+hex_to_upper([H|T], Accum) ->
+    hex_to_upper(T, lists:append(Accum, [H])).
+
+
+-spec to_upper(char()) -> char().
+to_upper($a) -> $A;
+to_upper($b) -> $B;
+to_upper($c) -> $C;
+to_upper($d) -> $D;
+to_upper($e) -> $E;
+to_upper($f) -> $F;
+to_upper(C) -> C.
