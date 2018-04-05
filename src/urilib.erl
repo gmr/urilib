@@ -275,7 +275,11 @@ url_add_path(undefined, URL) ->
 
 url_add_path(Path, URL) ->
     Escaped = string:join([url_escape_path_segment(P) || P <- string:tokens(Path, "/")], "/"),
-    string:join([URL, Escaped], "/").
+    Joined = string:join([URL, Escaped], "/"),
+    case lists:suffix("/", Path) of
+        true -> string:concat(Joined, "/");
+        false -> Joined
+    end.
 
 
 -spec url_escape_path_segment(string()) -> string().
