@@ -57,6 +57,11 @@ build_variation10_test() ->
     Expect = "http://www.google.com/#foo",
     ?assertEqual(Expect, urilib:build(Params)).
 
+build_uri_path_with_trailing_slash_test() ->
+    Params = {https, undefined, "www.example.com", 443, "/foo/", undefined, undefined},
+    Expect = "https://www.example.com/foo/",
+    ?assertEqual(Expect, urilib:build(Params)).
+
 build_url_variation1_test() ->
     Params = {amqp, "guest", "password", "rabbitmq", 5672, "/%2f", [{"heartbeat", "5"}], undefined},
     Expect = "amqp://guest:password@rabbitmq:5672/%2f?heartbeat=5",
@@ -117,6 +122,11 @@ parse_uri_test() ->
     Expect = {amqp, {{"guest", "password"}, "rabbitmq", 5672}, "/%2f",
               [{"heartbeat", "5"}], undefined},
     ?assertEqual(Expect, urilib:parse(URI, uri)).
+
+parse_uri_with_trailing_slash_test() ->
+    URI = "https://www.example.com/foo/",
+    Expect = {https, {undefined, "www.example.com", 443}, "/foo/", undefined, undefined},
+    ?assertEqual(Expect, urilib:parse(URI)).
 
 parse_url_variation1_test() ->
     URI = "amqp://guest:password@rabbitmq:5672/%2f?heartbeat=5&foo=bar&baz+corgie=qux+grault",
