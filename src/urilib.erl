@@ -18,7 +18,6 @@
 
 -export_type([scheme/0,
               host/0,
-              tcp_port/0,
               username/0,
               password/0,
               userinfo/0,
@@ -37,16 +36,15 @@
 -type hexcase() :: uppercase | lowercase.
 -type scheme() :: http | https | atom().
 -type host() :: string().
--type tcp_port() :: integer().
 -type username() :: string() | undefined.
 -type password() :: string() | undefined.
 -type userinfo() :: {username(), password()} | undefined.
--type authority() :: {userinfo(), host(), tcp_port()}.
+-type authority() :: {userinfo(), host(), inet:port_number()}.
 -type path() :: string().
 -type query() :: [tuple() | string()] | undefined.
 -type fragment() :: string() | undefined.
 -type uri() :: {scheme(), authority(), path(), query(), fragment()}.
--type url() :: {scheme(), username(), password(), host(), tcp_port(), path(), query(), fragment()}.
+-type url() :: {scheme(), username(), password(), host(), inet:port_number(), path(), query(), fragment()}.
 
 -spec build(Value :: uri() | url()) -> string().
 %% @doc Build a URI
@@ -247,7 +245,7 @@ url_maybe_add_userinfo(Username, Password, URL) ->
     string:concat(URL, string:concat(string:join([Username, Password], ":"), "@")).
 
 
--spec url_add_host_and_port(scheme(), host(), tcp_port(), string()) -> string().
+-spec url_add_host_and_port(scheme(), host(), inet:port_number(), string()) -> string().
 %% @private
 url_add_host_and_port(undefined, Host, undefined, URL) ->
     string:concat(URL, Host);

@@ -33,13 +33,12 @@ Type          | Definition
 `password()`  | `string() | undefined`
 `userinfo()`  | `{username(), password()} | undefined`
 `host()`      | `string()`
-`tcp_port()`  | `integer()`
-`authority()` | `{userinfo(), host(), tcp_port()}`
+`authority()` | `{userinfo(), host(), inet:port_number()}`
 `path()`      | `string()`
 `query()`     | `[tuple() | string()] | undefined`
 `fragment()`  | `string() | undefined`
 `uri()`       | `{scheme(), authority(), path(), query(), fragment()}`
-`url()`       | `{scheme(), username(), password(), host(), tcp_port(), path(), query(), fragment()}`
+`url()`       | `{scheme(), username(), password(), host(), inet:port_number(), path(), query(), fragment()}`
 
 ## Example Usage
 
@@ -48,7 +47,7 @@ Eshell V7.2.1  (abort with ^G)
 1> urilib:build({http, {{"guest", "guest"}, "localhost", 15672}, "/api/queues", [{"name", "test"}], undefined}).
 "http://guest:guest@localhost:15672/api/queues?name=test"
 
-2> urilib:build({http, "guest", "guest", "localhost", 15672, "/api/queues", [{"name", "test"}], undefined}).    
+2> urilib:build({http, "guest", "guest", "localhost", 15672, "/api/queues", [{"name", "test"}], undefined}).
 "http://guest:guest@localhost:15672/api/queues?name=test"
 
 3> urilib:parse("http://guest:guest@localhost:15672/api/queues?name=test").
