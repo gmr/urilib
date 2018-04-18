@@ -62,6 +62,16 @@ build_uri_path_with_trailing_slash_test() ->
     Expect = "https://www.example.com/foo/",
     ?assertEqual(Expect, urilib:build(Params)).
 
+build_uri_path_with_root_path_test() ->
+    Params = {https, undefined, "www.example.com", 443, "/", undefined, undefined},
+    Expect = "https://www.example.com/",
+    ?assertEqual(Expect, urilib:build(Params)).
+
+build_uri_path_with_no_path_test() ->
+    Params = {https, undefined, "www.example.com", 443, "", undefined, undefined},
+    Expect = "https://www.example.com/",
+    ?assertEqual(Expect, urilib:build(Params)).
+
 build_url_variation1_test() ->
     Params = {amqp, "guest", "password", "rabbitmq", 5672, "/%2f", [{"heartbeat", "5"}], undefined},
     Expect = "amqp://guest:password@rabbitmq:5672/%2f?heartbeat=5",
