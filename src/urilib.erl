@@ -72,8 +72,11 @@ build({Scheme, Username, Password, Host, Port, Path, Query, Fragment}) ->
     url_maybe_add_fragment(Fragment, U5).
 
 
--spec parse(string()) -> uri().
+-spec parse(string()) -> uri() | {error, Reason :: term()}.
 %% @doc Parse a URI
+%%
+%% Returns either the URI or an error term.
+%%
 %% @end
 parse(Value) ->
     case http_uri:parse(Value, [{scheme_defaults, http_uri:scheme_defaults()}, {fragment, true}]) of
@@ -84,8 +87,11 @@ parse(Value) ->
     end.
 
 
--spec parse(string(), Return :: uri | url) -> uri().
+-spec parse(string(), Return :: uri | url) -> uri() | {error, Reason :: term()}.
 %% @doc Parse a URI, returning the result as either a {@type uri()} or {@type url()}.
+%%
+%% On error, return an error term.
+%%
 %% @end
 parse(Value, uri) ->
     parse(Value);
